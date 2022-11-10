@@ -17,16 +17,27 @@ public class DefAccountService implements AccountService{
         if (hash.containsKey(id)){
             return hash.get(id);
         }
-        Long result = 0L;
-        result = repository.findByid(id).getValue();
-
+        Long result;
+        Entity entity;
+        entity = repository.findByid(id);
+        if (entity == null){
+            result = 0L;
+        } else {
+            result = entity.getValue();
+        }
         return result;
     }
 
     @Override
     public void addAmount(Integer id, Long value) {
-        hash.put(id, value);
-        Entity entity = new Entity(id, value);
-        repository.save(entity);
+        Entity entity = repository.findByid(id);
+        Long resultValue;
+        if (entity == null){
+            resultValue = value;
+        } else {
+            resultValue = entity.getValue() + value;
+        }
+        Entity resultEntity = new Entity(id, resultValue);
+        repository.save(resultEntity);
     }
 }

@@ -14,14 +14,14 @@ public class Controller {
     @Autowired
     AccountService accountService;
     @GetMapping(path = "/getId")
-    public ResponseEntity getValue(@RequestParam("id") int id){
+    public ResponseEntity getValue(@RequestParam("id") int id) {
         log.info(id);
         try {
             return ResponseEntity.ok(accountService.getAmount(id));
         } catch (NumberFormatException e) {
             log.info("failure");
+            return ResponseEntity.badRequest().body("");
         }
-        return ResponseEntity.badRequest().body("");
     }
 
     @GetMapping(path = "/addValue")
