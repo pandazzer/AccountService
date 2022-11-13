@@ -15,7 +15,6 @@ public class Controller {
     AccountService accountService;
     @GetMapping(path = "/getId")
     public ResponseEntity getValue(@RequestParam("id") int id) {
-        log.info(id);
         try {
             return ResponseEntity.ok(accountService.getAmount(id));
         } catch (NumberFormatException e) {
@@ -26,7 +25,6 @@ public class Controller {
 
     @GetMapping(path = "/addValue")
     public ResponseEntity getValue(@RequestParam("id") int id, @RequestParam("value") long value){
-        log.info(String.valueOf(id), value);
         try {
             accountService.addAmount(id, value);
             return new ResponseEntity<>(HttpStatus.CREATED);
