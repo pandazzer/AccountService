@@ -18,7 +18,7 @@ public class DefAccountService implements AccountService {
     @Autowired
     @Getter
     private Repository repository;
-    private static int TIMER_FOR_STATISTIC_LOG = 5000;
+    private static int TIMER_FOR_STATISTIC_LOG = 5000;      //
     Logger log = LogManager.getLogger();
     AtomicInteger getAmountCountClientInTime = new AtomicInteger(0);
     AtomicInteger addAmountCountClientInTime = new AtomicInteger(0);
