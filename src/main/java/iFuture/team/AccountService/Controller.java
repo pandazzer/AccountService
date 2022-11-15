@@ -5,7 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping
@@ -13,6 +16,7 @@ public class Controller {
     Logger log = LogManager.getLogger();
     @Autowired
     AccountService accountService;
+
     @GetMapping(path = "/getId")
     public ResponseEntity getValue(@RequestParam("id") int id) {
         try {
@@ -24,7 +28,7 @@ public class Controller {
     }
 
     @GetMapping(path = "/addValue")
-    public ResponseEntity getValue(@RequestParam("id") int id, @RequestParam("value") long value){
+    public ResponseEntity getValue(@RequestParam("id") int id, @RequestParam("value") long value) {
         try {
             accountService.addAmount(id, value);
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -33,8 +37,9 @@ public class Controller {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    @GetMapping (path = "/resetStatistic")
-    public ResponseEntity resetStatistic(){
+
+    @GetMapping(path = "/resetStatistic")
+    public ResponseEntity resetStatistic() {
         accountService.resetStatistic();
         return new ResponseEntity<>(HttpStatus.OK);
     }

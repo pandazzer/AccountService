@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class DefAccountService implements AccountService{
+public class DefAccountService implements AccountService {
     @Autowired
     @Getter
     private Repository repository;
@@ -33,13 +33,13 @@ public class DefAccountService implements AccountService{
 
     @Override
     public Long getAmount(Integer id) {
-        if (hash.containsKey(id)){
+        if (hash.containsKey(id)) {
             getAmountCountClientInTime.incrementAndGet();
             return hash.get(id);
         }
         Long result;
         Entity entity = getRepository().findByid(id);
-        if (entity == null){
+        if (entity == null) {
             result = 0L;
         } else {
             result = entity.getValue();
@@ -53,7 +53,7 @@ public class DefAccountService implements AccountService{
     public void addAmount(Integer id, Long value) {
         Entity entity = getRepository().findByid(id);
         Long resultValue;
-        if (entity == null){
+        if (entity == null) {
             resultValue = value;
         } else {
             resultValue = entity.getValue() + value;
@@ -71,8 +71,8 @@ public class DefAccountService implements AccountService{
     }
 
     class Statistic extends Thread {
-        public void run(){
-            while (true){
+        public void run() {
+            while (true) {
                 try {
                     Thread.sleep(TIMER_FOR_STATISTIC_LOG);
                 } catch (InterruptedException e) {
@@ -80,9 +80,9 @@ public class DefAccountService implements AccountService{
                 }
                 totalAddAmount += addAmountCountClientInTime.get();
                 totalGetAmount += getAmountCountClientInTime.get();
-                log.info("getAmount clients in per second: " + getAmountCountClientInTime.get() * 1000/TIMER_FOR_STATISTIC_LOG);
+                log.info("getAmount clients in per second: " + getAmountCountClientInTime.get() * 1000 / TIMER_FOR_STATISTIC_LOG);
                 log.info("total getAmount: " + totalGetAmount);
-                log.info("addAmount clients in per second: " + addAmountCountClientInTime.get() * 1000/TIMER_FOR_STATISTIC_LOG);
+                log.info("addAmount clients in per second: " + addAmountCountClientInTime.get() * 1000 / TIMER_FOR_STATISTIC_LOG);
                 log.info("total addAmount: " + totalAddAmount);
                 getAmountCountClientInTime.set(0);
                 addAmountCountClientInTime.set(0);
