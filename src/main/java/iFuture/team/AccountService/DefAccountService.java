@@ -18,11 +18,13 @@ public class DefAccountService implements AccountService{
     @Autowired
     @Getter
     private Repository repository;
+    private static int TIMER_FOR_STATISTIC_LOG = 5000;
     Logger log = LogManager.getLogger();
-    AtomicInteger getAmountCountClient = new AtomicInteger(0);
-    AtomicInteger addAmountCountClient = new AtomicInteger(0);
+    AtomicInteger getAmountCountClientInTime = new AtomicInteger(0);
+    AtomicInteger addAmountCountClientInTime = new AtomicInteger(0);
     @Setter
-    int totalClients = 0;
+    int totalGetAmount = 0;
+    int totalAddAmount = 0;
     Map<Integer, Long> hash = new HashMap<>();// здесь можно подключить redis, но для экономии используем Map'у
 
     public DefAccountService() {
@@ -32,7 +34,7 @@ public class DefAccountService implements AccountService{
     @Override
     public Long getAmount(Integer id) {
         if (hash.containsKey(id)){
-            getAmountCountClient.incrementAndGet();
+            getAmountCountClientInTime.incrementAndGet();
             return hash.get(id);
         }
         Long result;
@@ -43,7 +45,7 @@ public class DefAccountService implements AccountService{
             result = entity.getValue();
         }
         hash.put(id, result);
-        getAmountCountClient.incrementAndGet();
+        getAmountCountClientInTime.incrementAndGet();
         return result;
     }
 
@@ -59,28 +61,31 @@ public class DefAccountService implements AccountService{
         hash.put(id, resultValue);
         Entity resultEntity = new Entity(id, resultValue);
         getRepository().save(resultEntity);
-        addAmountCountClient.incrementAndGet();
+        addAmountCountClientInTime.incrementAndGet();
     }
 
     @Override
     public void resetStatistic() {
-        totalClients = 0;
+        totalAddAmount = 0;
+        totalGetAmount = 0;
     }
 
     class Statistic extends Thread {
         public void run(){
             while (true){
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(TIMER_FOR_STATISTIC_LOG);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                totalClients += getAmountCountClient.get() + addAmountCountClient.get();
-                log.info("getAmount clients: " + getAmountCountClient);
-                log.info("addAmount clients: " + addAmountCountClient);
-                log.info("totalClients: " + totalClients);
-                getAmountCountClient.set(0);
-                addAmountCountClient.set(0);
+                totalAddAmount += addAmountCountClientInTime.get();
+                totalGetAmount += getAmountCountClientInTime.get();
+                log.info("getAmount clients in per second: " + getAmountCountClientInTime.get() * 1000/TIMER_FOR_STATISTIC_LOG);
+                log.info("total getAmount: " + totalGetAmount);
+                log.info("addAmount clients in per second: " + addAmountCountClientInTime.get() * 1000/TIMER_FOR_STATISTIC_LOG);
+                log.info("total addAmount: " + totalAddAmount);
+                getAmountCountClientInTime.set(0);
+                addAmountCountClientInTime.set(0);
             }
         }
     }
