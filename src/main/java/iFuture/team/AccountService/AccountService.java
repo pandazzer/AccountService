@@ -16,4 +16,5 @@ public interface AccountService
      * @param value positive or negative value, which must be added to current balance
      */
     void addAmount(Integer id, Long value);
+    void resetStatistic();
 }

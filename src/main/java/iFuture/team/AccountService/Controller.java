@@ -18,7 +18,7 @@ public class Controller {
         try {
             return ResponseEntity.ok(accountService.getAmount(id));
         } catch (NumberFormatException e) {
-            log.info("failure");
+            log.info("fail getId");
             return ResponseEntity.badRequest().body("");
         }
     }
@@ -29,8 +29,13 @@ public class Controller {
             accountService.addAmount(id, value);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (NumberFormatException e) {
-            log.info("failure");
+            log.info("fail addValue");
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    @GetMapping (path = "/resetStatistic")
+    public ResponseEntity resetStatistic(){
+        accountService.resetStatistic();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
